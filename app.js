@@ -30,7 +30,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: 'http://localhost:5000', // Replace with your actual server URL
+        url: 'http://localhost:5000/api', // Replace with your actual server URL
       },
     ],
     components: {
@@ -79,8 +79,8 @@ mongoose
   .catch((err) => console.log('Failed to connect to MongoDB', err));
 
 // Use routes
-app.use('/api/courses', coursesRoutes); // Course routes
-app.use('/api/quizzes', quizzesRoutes); // Quiz routes
+app.use('/api', coursesRoutes); // Course routes
+app.use('/api', quizzesRoutes); // Quiz routes
 
 // Root endpoint (optional)
 app.get('/', (req, res) => {
