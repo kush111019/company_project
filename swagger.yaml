@@ -1,0 +1,177 @@
+openapi: 3.0.0
+info:
+  title: Education Platform API
+  version: 1.0.0
+  description: API for managing courses and quizzes in an educational platform
+paths:
+  /api/courses/{courseId}/quizzes:
+    post:
+      summary: Create a quiz for a specific course
+      parameters:
+        - in: path
+          name: courseId
+          required: true
+          description: ID of the course to create the quiz for
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                question:
+                  type: string
+                  description: The question for the quiz
+                options:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of options for the quiz question
+                correctAnswer:
+                  type: string
+                  description: The correct answer for the quiz question
+      responses:
+        201:
+          description: Quiz created successfully
+        404:
+          description: Course not found
+        400:
+          description: Bad request
+
+    get:
+      summary: Get all quizzes for a specific course
+      parameters:
+        - in: path
+          name: courseId
+          required: true
+          description: ID of the course to fetch quizzes for
+          schema:
+            type: string
+      responses:
+        200:
+          description: List of quizzes for the course
+        404:
+          description: Course not found
+        400:
+          description: Bad request
+
+  /api/quizzes/{id}:
+    get:
+      summary: Get a specific quiz by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: The ID of the quiz to fetch
+          schema:
+            type: string
+      responses:
+        200:
+          description: Quiz data
+        404:
+          description: Quiz not found
+        400:
+          description: Bad request
+
+    put:
+      summary: Update a specific quiz by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: The ID of the quiz to update
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                question:
+                  type: string
+                  description: The updated question for the quiz
+                options:
+                  type: array
+                  items:
+                    type: string
+                  description: Updated array of options
+                correctAnswer:
+                  type: string
+                  description: The updated correct answer for the quiz question
+      responses:
+        200:
+          description: Quiz updated successfully
+        404:
+          description: Quiz not found
+        400:
+          description: Bad request
+
+    delete:
+      summary: Delete a specific quiz by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: The ID of the quiz to delete
+          schema:
+            type: string
+      responses:
+        200:
+          description: Quiz deleted successfully
+        404:
+          description: Quiz not found
+        400:
+          description: Bad request
+
+components:
+  schemas:
+    Quiz:
+      type: object
+      required:
+        - question
+        - options
+        - correctAnswer
+      properties:
+        question:
+          type: string
+          description: The question of the quiz
+        options:
+          type: array
+          items:
+            type: string
+          description: The multiple choice options for the quiz
+        correctAnswer:
+          type: string
+          description: The correct answer for the quiz
+    Course:
+      type: object
+      required:
+        - title
+        - description
+        - duration
+        - instructorName
+        - language
+        - level
+      properties:
+        title:
+          type: string
+          description: Title of the course
+        description:
+          type: string
+          description: Description of the course
+        duration:
+          type: integer
+          description: Duration of the course in hours
+        instructorName:
+          type: string
+          description: Instructor's name
+        language:
+          type: string
+          description: Language of instruction
+        level:
+          type: string
+          description: Level of the course (beginner, intermediate, advanced)

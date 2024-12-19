@@ -1,0 +1,38 @@
+# Node.js modules
+node_modules/
+
+# Logs
+*.log
+
+# Environment variables file
+.env
+
+# Build files
+dist/
+build/
+
+# IDE or editor-specific folders
+.idea/
+.vscode/
+
+# Operating system files
+.DS_Store   # macOS
+Thumbs.db   # Windows
+
+# npm package-lock or yarn.lock
+package-lock.json
+yarn.lock
+
+# MongoDB database files (if you use local database files)
+*.db
+*.sqlite
+
+# Temporary files
+*.tmp
+*.swp
+
+# Coverage folder for test results
+coverage/
+
+# Debugger directory for VSCode
+.vscode/
