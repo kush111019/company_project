@@ -3,7 +3,28 @@ info:
   title: Education Platform API
   version: 1.0.0
   description: API for managing courses and quizzes in an educational platform
+
 paths:
+  /api/courses:
+    post:
+      summary: Create a new course
+      description: This endpoint creates a new course.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Course'  # Reference to the Course schema
+      responses:
+        '201':
+          description: Course created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'  # Referencing the Course schema for the response
+        '400':
+          description: Bad request
+
   /api/courses/{courseId}/quizzes:
     post:
       summary: Create a quiz for a specific course
@@ -19,25 +40,17 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                question:
-                  type: string
-                  description: The question for the quiz
-                options:
-                  type: array
-                  items:
-                    type: string
-                  description: Array of options for the quiz question
-                correctAnswer:
-                  type: string
-                  description: The correct answer for the quiz question
+              $ref: '#/components/schemas/Quiz'  # Referencing the Quiz schema
       responses:
-        201:
+        '201':
           description: Quiz created successfully
-        404:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quiz'  # Quiz schema for the response
+        '404':
           description: Course not found
-        400:
+        '400':
           description: Bad request
 
     get:
@@ -50,11 +63,17 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: List of quizzes for the course
-        404:
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Quiz'
+        '404':
           description: Course not found
-        400:
+        '400':
           description: Bad request
 
   /api/quizzes/{id}:
@@ -68,11 +87,15 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: Quiz data
-        404:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quiz'
+        '404':
           description: Quiz not found
-        400:
+        '400':
           description: Bad request
 
     put:
@@ -89,25 +112,17 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                question:
-                  type: string
-                  description: The updated question for the quiz
-                options:
-                  type: array
-                  items:
-                    type: string
-                  description: Updated array of options
-                correctAnswer:
-                  type: string
-                  description: The updated correct answer for the quiz question
+              $ref: '#/components/schemas/Quiz'
       responses:
-        200:
+        '200':
           description: Quiz updated successfully
-        404:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quiz'
+        '404':
           description: Quiz not found
-        400:
+        '400':
           description: Bad request
 
     delete:
@@ -120,33 +135,15 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: Quiz deleted successfully
-        404:
+        '404':
           description: Quiz not found
-        400:
+        '400':
           description: Bad request
 
 components:
   schemas:
-    Quiz:
-      type: object
-      required:
-        - question
-        - options
-        - correctAnswer
-      properties:
-        question:
-          type: string
-          description: The question of the quiz
-        options:
-          type: array
-          items:
-            type: string
-          description: The multiple choice options for the quiz
-        correctAnswer:
-          type: string
-          description: The correct answer for the quiz
     Course:
       type: object
       required:
@@ -175,3 +172,22 @@ components:
         level:
           type: string
           description: Level of the course (beginner, intermediate, advanced)
+
+    Quiz:
+      type: object
+      required:
+        - question
+        - options
+        - correctAnswer
+      properties:
+        question:
+          type: string
+          description: The question for the quiz
+        options:
+          type: array
+          items:
+            type: string
+          description: Array of options for the quiz question
+        correctAnswer:
+          type: string
+          description: The correct answer for the quiz question

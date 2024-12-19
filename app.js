@@ -1,24 +1,23 @@
 const express = require('express');
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
-const cors = require('cors');
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
-const courseRoutes = require('./routes/courses');
-const quizRoutes = require('./routes/quizzes');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const dotenv = require('dotenv');
+const coursesRoutes = require('./routes/courses');
+const quizzesRoutes = require('./routes/quizzes');
 
-// Initialize the app
+// Load environment variables
+dotenv.config();
+
+// Initialize Express
 const app = express();
 
-// Middleware setup
-app.use(bodyParser.json());
-app.use(cors()); // Enable Cross-Origin Resource Sharing (CORS) if needed
+// Use JSON parser for incoming requests
+app.use(express.json());
 
-// MongoDB connection setup
-const DB_URI = 'mongodb://localhost:27017/edu-platform';  // Update with your actual DB URI
-mongoose.connect(DB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('MongoDB connected successfully!'))
-  .catch((err) => console.log('MongoDB connection error: ', err));
+// Enable CORS for all routes (optional)
+app.use(cors());
 
 // Swagger setup
 const swaggerOptions = {
@@ -29,26 +28,73 @@ const swaggerOptions = {
       version: '1.0.0',
       description: 'API for managing courses and quizzes in an educational platform',
     },
+    servers: [
+      {
+        url: 'http://localhost:5000', // Replace with your actual server URL
+      },
+    ],
+    components: {
+      schemas: {
+        Course: {
+          type: 'object',
+          required: ['title', 'description', 'duration', 'instructorName', 'language', 'level'],
+          properties: {
+            title: { type: 'string' },
+            description: { type: 'string' },
+            duration: { type: 'integer' },
+            instructorName: { type: 'string' },
+            language: { type: 'string' },
+            level: { type: 'string' },
+            price: { type: 'integer' },
+            status: { type: 'string' },
+            visibility: { type: 'string' },
+          },
+        },
+        Quiz: {
+          type: 'object',
+          required: ['question', 'options', 'correctAnswer'],
+          properties: {
+            question: { type: 'string' },
+            options: {
+              type: 'array',
+              items: { type: 'string' },
+            },
+            correctAnswer: { type: 'string' },
+          },
+        },
+      },
+    },
   },
-  apis: ['./routes/*.js'],  // Include route files to auto-generate Swagger documentation
+  apis: ['./routes/courses.js', './routes/quizzes.js'], // Point to your route files for Swagger to parse
 };
 
+// Initialize Swagger with the options
 const swaggerDocs = swaggerJsdoc(swaggerOptions);
-
-// Use Swagger UI to display the API documentation
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-// Routes
-app.use('/api', courseRoutes);  // Course routes
-app.use('/api', quizRoutes);    // Quiz routes
+// MongoDB connection (replace with your MongoDB URI)
+mongoose
+  .connect(process.env.DB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('Connected to MongoDB'))
+  .catch((err) => console.log('Failed to connect to MongoDB', err));
 
-// Default route for testing
+// Use routes
+app.use('/api/courses', coursesRoutes); // Course routes
+app.use('/api/quizzes', quizzesRoutes); // Quiz routes
+
+// Root endpoint (optional)
 app.get('/', (req, res) => {
-  res.send('Welcome to the Educational Platform API!');
+  res.send('Welcome to the Education Platform API');
+});
+
+// Error handling middleware (optional)
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something went wrong!');
 });
 
 // Start the server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+const port = process.env.PORT || 5000;
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
 });
